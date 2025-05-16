@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import searchTermReducer from '../features/searchTerm/searchTermSlice';
+import feedSliceReducer from '../features/homePage/feedSlice';
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    searchTerm: searchTermReducer,
+    feed: feedSliceReducer
   },
 });
