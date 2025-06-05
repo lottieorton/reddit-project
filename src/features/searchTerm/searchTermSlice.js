@@ -16,4 +16,4 @@ export const searchTermSlice = createSlice({
 })
 
 export default searchTermSlice.reducer;
-export const {setSearchTerm} = searchTermSlice.actions;
+export const {setSearchTerm, clearSearchTerm} = searchTermSlice.actions;

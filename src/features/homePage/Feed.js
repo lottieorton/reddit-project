@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Post } from '../post/Post'
 import { SearchTerm } from '../searchTerm/SearchTerm'
+import { Filter } from '../filter/Filter'
 //import { } from './homePageSlice';
 //import styles from './Counter.module.css';
 
@@ -13,10 +14,14 @@ const fakePosts = [
 
 
 export function Feed() {
+    //const feed = useSelector(selectFeed);
+
+
     return  (
         <>
             
             <SearchTerm />
+            <Filter />
 
             {fakePosts.map((post) => {
                 const {id, category, description, img} = post;

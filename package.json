@@ -2,6 +2,7 @@
   "name": "reddit-project",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
     "cra-template-redux": "2.0.0",
