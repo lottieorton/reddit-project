@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
-import searchTermReducer from '../features/searchTerm/searchTermSlice';
-import feedReducer from '../features/homePage/feedSlice';
-import filterReducer from '../features/filter/filterSlice'
+import searchTermReducer from '../features/searchTerm/searchTermSlice.js';
+import feedReducer from '../features/homePage/feedSlice.js';
+import filterReducer from '../features/filter/filterSlice.js'
 
 export const store = configureStore({
   reducer: {
