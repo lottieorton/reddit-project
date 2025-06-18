@@ -25,16 +25,10 @@ export function SearchTerm() {
         <>
             <form>
                 <label htmlFor="searchBar" >Search: </label>
-                <input id ="searchBar" type="text" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+                <input id ="searchBar" name="searchBar" type="text" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
                 <button onClick={handleSearchClick}>Search</button>
                 <button onClick={handleClearSearchClick}>Clear</button>
             </form>
         </>
     )
 }
-
-
-
-
-
-

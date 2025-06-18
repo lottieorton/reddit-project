@@ -1,3 +1,5 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
+
 export const apiBaseURL = 'https://www.reddit.com';
 
 export const getSubredditList = async () => {
@@ -17,9 +19,11 @@ export const getSubredditList = async () => {
     }
 }
 
-const subredditDefault = '/r/pics/'; //default value for posts
+const subredditDefault = '/r/pics/'; //default value for posts /r/SUBREDDIT displayname
 
-export const getSubredditPosts = async (subreddit) => {
+export const getSubredditPosts = createAsyncThunk(
+    'reddit/getSubredditPosts',
+    async (subreddit) => {
     try {
         const response = await fetch(`${apiBaseURL}${subreddit}.json`);
         if (response.ok) {
@@ -39,7 +43,7 @@ export const getSubredditPosts = async (subreddit) => {
     } catch (error) {
         console.log(error);
     }
-}
+});
 
 //getSubredditList();
 getSubredditPosts(subredditDefault);

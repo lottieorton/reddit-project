@@ -3,12 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 //import styles from './Counter.module.css';
 
 
-export function Post({id, category, description, img}) {
+export function Post({id, subreddit_name_prefixed, title, url}) {
     
     return  (
         <>
-            <h3>{description}</h3> 
-            <img src={img} />
+            <h3>{title}</h3> 
+            <img src={url} />
         </>
     )
 }
