@@ -1,12 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getSubredditPosts } from '../api/reddit.js';
+import { getSubredditPosts, getSubredditList } from '../api/reddit.js';
 
 export const redditSlice = createSlice({
     name: 'reddit',
     initialState: {
         feed: [],
-        isLoading: false,
-        hasError: false
+        list: [],
+        feedIsLoading: false,
+        feedHasError: false,
+        listIsLoading: false,
+        listHasError: false
     },
     reducers: {
     },
@@ -14,19 +17,35 @@ export const redditSlice = createSlice({
         builder.addCase(
             getSubredditPosts.pending,
             (state) => {
-                state.isLoading = true;
-                state.hasError = false;
+                state.feedIsLoading = true;
+                state.feedHasError = false;
         }).addCase(
             getSubredditPosts.fulfilled,
             (state, action) => {
                 state.feed = action.payload;
-                state.isLoading = false;
-                state.hasError = false;
+                state.feedIsLoading = false;
+                state.feedHasError = false;
         }).addCase(
             getSubredditPosts.rejected,
             (state, action) => {
-                state.isLoading = false;
-                state.hasError = true;
+                state.feedIsLoading = false;
+                state.feedHasError = true;
+        }).addCase(
+            getSubredditList.pending,
+            (state) => {
+                state.listIsLoading = true;
+                state.listHasError = false;
+        }).addCase(
+            getSubredditList.fulfilled,
+            (state, action) => {
+                state.list = action.payload;
+                state.listIsLoading = false;
+                state.listHasError = false;
+        }).addCase(
+            getSubredditList.rejected,
+            (state, action) => {
+                state.listIsLoading = false;
+                state.listHasError = true;
         })
     }
 })

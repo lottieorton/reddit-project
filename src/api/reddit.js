@@ -2,7 +2,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const apiBaseURL = 'https://www.reddit.com';
 
-export const getSubredditList = async () => {
+export const getSubredditList = createAsyncThunk(
+    'reddit/getSubredditList',
+    async () => {
     try {
         const response = await fetch(`${apiBaseURL}/subreddits.json`);
         if (response.ok) {
@@ -17,7 +19,7 @@ export const getSubredditList = async () => {
     } catch (error) {
         console.log(error);
     }
-}
+});
 
 const subredditDefault = '/r/pics/'; //default value for posts /r/SUBREDDIT displayname
 
@@ -44,6 +46,3 @@ export const getSubredditPosts = createAsyncThunk(
         console.log(error);
     }
 });
-
-//getSubredditList();
-getSubredditPosts(subredditDefault);
