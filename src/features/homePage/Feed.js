@@ -19,7 +19,24 @@ export function Feed() {
     }, []
     );
 
-    const feed = useSelector((state) => state.reddit.feed);
+    const posts = useSelector((state) => state.reddit.feed);
+    const searchValue = useSelector((state) => state.searchTerm);
+    console.log(searchValue);
+
+    const searchedFeed = searchValue => {
+        const lowercaseSearchValue = searchValue.toLowerCase();
+        return posts.filter(post => {
+            const lowercaseTitle = post.title.toLowerCase();
+            return lowercaseTitle.includes(lowercaseSearchValue);
+        })
+    }
+
+    let feed;
+    if(searchValue) {
+        feed = searchedFeed(searchValue);
+    } else {
+        feed = posts;
+    }
 
     return  (
         <>

@@ -11,6 +11,7 @@ export function SearchTerm() {
     const handleSearchClick = (e) => {
         e.preventDefault();
         if (searchValue.length === 0) {
+            dispatch(clearSearchTerm());
             return;
         }
         dispatch(setSearchTerm({value: searchValue}));
