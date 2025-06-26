@@ -5,7 +5,6 @@ import { SearchTerm } from '../searchTerm/SearchTerm.js';
 import { Filter } from '../filter/Filter.js';
 import { getSubredditPosts, getSubredditList } from '../../api/reddit.js';
 import { store } from '../../app/store.js';
-//import { } from './homePageSlice';
 //import styles from './Counter.module.css';
 
 const subredditDefault = '/r/pics/';
@@ -21,7 +20,7 @@ export function Feed() {
 
     const posts = useSelector((state) => state.reddit.feed);
     const searchValue = useSelector((state) => state.searchTerm);
-    console.log(searchValue);
+    //console.log(searchValue);
 
     const searchedFeed = searchValue => {
         const lowercaseSearchValue = searchValue.toLowerCase();
@@ -45,8 +44,8 @@ export function Feed() {
             <Filter />
 
             {feed.map((post) => {
-                const {id, subreddit_name_prefixed, title, url} = post;
-                return <Post id={id} category={subreddit_name_prefixed} title={title} url={url} />
+                const {id, subredditNamePrefixed, title, url} = post;
+                return <Post key={id} id={id} category={subredditNamePrefixed} title={title} url={url} />
                 
             })}
 

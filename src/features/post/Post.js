@@ -9,7 +9,7 @@ export function Post({id, category, title, url}) {
         <>
             <h3>{title}</h3>
             <h4>{category}</h4>
-            <img src={url} />
+            <img src={url} alt={title}/>
         </>
     )
 }

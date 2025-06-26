@@ -2,24 +2,21 @@ import filterReducer, {
     setFilter
 } from '../features/filter/filterSlice.js';
 
-
-//DON'T NEED TEST THIS HERE - TEST THE STORE ITSELF
-// it("should return the initial state", () => {
-//     //arrange
-//     const expectedInitialState = '';
-//     //act
-//     //assert
-//     expect(initialState).toEqual(expectedInitialState);
-// });
-
-it("should set the filter value", () => {
-    //arrange
-    const previousState = '';
-    const filterValue = "Filter Value";
-    //act
-    //assert
-    expect(filterReducer(previousState, setFilter({value: filterValue}))).toEqual(filterValue);
-});
-
-
-//Additional values? What if selects the default
+describe('filterReducer', () => {
+    const initialState = '';
+    
+    it('should check the initial state', () => {
+        expect(filterReducer(undefined, {type: 'UNKNOWN_ACTION'})).toEqual(initialState); //calling reducer with undefined state and unknown action should return the initial state 
+    })
+    
+    it("should set the filter value", () => {
+        //arrange
+        const previousState = '';
+        const filterValue = "Filter Value";
+        //act
+        const action = setFilter({value: filterValue});
+        const newState = filterReducer(previousState, action);
+        //assert
+        expect(newState).toEqual(filterValue);
+    });
+})

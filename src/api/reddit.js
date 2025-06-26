@@ -11,17 +11,21 @@ export const getSubredditList = createAsyncThunk(
             const jsonResponse = await response.json();
             const output = jsonResponse.data.children.map(subreddit => ({
                 title: subreddit.data.title, 
-                display_name: subreddit.data.display_name}));
-            console.log(output);
+                displayName: subreddit.data.display_name}));
+            //console.log(output);
             return output;
+        } else {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        //throw new Error('Request Failed')
     } catch (error) {
         console.log(error);
+        throw error; //Important to re-throw error so createAsyncThunk catches it
     }
 });
 
-const subredditDefault = '/r/pics/'; //default value for posts /r/SUBREDDIT displayname
+//MAYBE DON'T WRITE THE ABOVE AS TESTS LIKE THESE, MAYBE HAVE IT FULFILLED WITH A DIFFERENT MESSAGE ON THE PAGE??
+
+//const subredditDefault = '/r/pics/'; //default value for posts /r/SUBREDDIT displayname
 
 export const getSubredditPosts = createAsyncThunk(
     'reddit/getSubredditPosts',
@@ -33,16 +37,19 @@ export const getSubredditPosts = createAsyncThunk(
             const output = jsonResponse.data.children.map(post => ({
                 id: post.data.id,
                 title: post.data.title,
-                subreddit_name_prefixed: post.data.subreddit_name_prefixed,
+                subredditNamePrefixed: post.data.subreddit_name_prefixed,
                 preview: post.data.preview,
-                subreddit_id: post.data.subreddit_id,
+                subredditId: post.data.subreddit_id,
                 url: post.data.url
             }));
-            console.log(output);
+            //console.log(output);
             return output;
+        } else {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
         //throw new Error('Request Failed')
     } catch (error) {
         console.log(error);
+        throw error;
     }
 });

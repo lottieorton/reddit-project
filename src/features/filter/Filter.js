@@ -23,10 +23,10 @@ export function Filter() {
             <form>
                 <label htmlFor="filterSearch" >Filter category: </label>
                 <select id ="filterSearch" onChange={handleChange} value={filterCategory}>
-                    <option value="">Filter...</option>
-                    {filterList.map(filterOption => {
-                        const {display_name, title} = filterOption;
-                        return <option value={display_name}>{display_name}</option>
+                    <option key={"a"} value={"pics"}>Filter...</option>
+                    {filterList.map((filterOption, index) => {
+                        const {displayName, title} = filterOption;
+                        return <option key={index} value={displayName}>{displayName}</option>
                     })}
                 </select>
             </form>
