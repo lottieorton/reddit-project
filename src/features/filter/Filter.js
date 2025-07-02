@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setFilter } from './filterSlice.js';
 import { getSubredditPosts } from '../../api/reddit.js';
-//import { } from './homePageSlice';
 //import styles from './Counter.module.css';
 
 export function Filter() {

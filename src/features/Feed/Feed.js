@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { Post } from '../post/Post.js';
 import { SearchTerm } from '../searchTerm/SearchTerm.js';
 import { Filter } from '../filter/Filter.js';
@@ -7,16 +7,7 @@ import { getSubredditPosts, getSubredditList } from '../../api/reddit.js';
 import { store } from '../../app/store.js';
 //import styles from './Counter.module.css';
 
-const subredditDefault = '/r/pics/';
-
 export function Feed() {
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(getSubredditPosts(subredditDefault)); //Default subreddit title used when page first loads
-        dispatch(getSubredditList());
-    }, []
-    );
 
     const posts = useSelector((state) => state.reddit.feed);
     const searchValue = useSelector((state) => state.searchTerm);
@@ -45,8 +36,7 @@ export function Feed() {
 
             {feed.map((post) => {
                 const {id, subredditNamePrefixed, title, url} = post;
-                return <Post key={id} id={id} category={subredditNamePrefixed} title={title} url={url} />
-                
+                return <Post key={id} id={id} category={subredditNamePrefixed} title={title} url={url} /> 
             })}
 
         </>
