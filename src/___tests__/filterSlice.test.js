@@ -19,4 +19,4 @@ describe('filterReducer', () => {
         //assert
         expect(newState).toEqual(filterValue);
     });
-})
+});

@@ -4,6 +4,7 @@ import '@testing-library/jest-dom';
 import App from '../App.js';
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, createMemoryRouter } from 'react-router-dom';
 import { MainPage } from '../features/MainPage/MainPage.js';
+import { router as appRouter } from '../App';
 //Mock components rendered by the routes
 // jest.mock('../features/Feed/Feed.js', () => ({
 jest.mock('../features/Feed/Feed.js', () => ({
@@ -49,9 +50,10 @@ describe('App component Routing', () => {
         expect(screen.queryByTestId('mockPostPage')).not.toBeInTheDocument();
     });
 
-    it('renders the Main Page and Post Page component on the path "/postpage/:id" ', async () => {
+    it('renders the Main Page and Post Page component on the path "subreddit/:subreddit/postpage/:id" ', async () => {
         //arrange
         const postId = '123';
+        const subreddit = 'testSubreddit'
         const MockMainPage = require('../features/MainPage/MainPage.js').MainPage;
         const MockFeed = require('../features/Feed/Feed.js').Feed;
         const MockPostPage = require('../features/post/PostPage.js').PostPage;
@@ -61,9 +63,9 @@ describe('App component Routing', () => {
         const testRouter = createMemoryRouter(createRoutesFromElements([
           <Route path='/' element={<MockMainPage />}>
             <Route index element={<MockFeed />} />
-            <Route path='postpage/:id' element={<MockPostPage />} />
+            <Route path='subreddit/:subreddit/postpage/:id' element={<MockPostPage />} />
           </Route>
-        ]), { initialEntries: [`/postpage/${postId}`] }); //Sets the initial URL for this test
+        ]), { initialEntries: [`/subreddit/${subreddit}/postpage/${postId}`] }); //Sets the initial URL for this test
         //action
         render(<RouterProvider router={testRouter} />);
         //assert
@@ -76,4 +78,18 @@ describe('App component Routing', () => {
         })
         expect(screen.queryByTestId('mockFeedComponent')).not.toBeInTheDocument();
     });
+
+    it('renders the RouterProvider element', async () => {
+        //arrange
+        //act
+        render(<App />);
+        //assert
+        await waitFor(() => {
+            const mainPageComponent = screen.getByTestId('mockMainPage');
+            const postPageComponent = screen.getByTestId('mockFeedComponent');
+            expect(mainPageComponent).toBeInTheDocument();
+            expect(postPageComponent).toBeInTheDocument();
+            expect(screen.queryByTestId('mockPostPage')).not.toBeInTheDocument();
+        })
+    })
 });

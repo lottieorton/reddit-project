@@ -36,11 +36,13 @@ export const getSubredditPosts = createAsyncThunk(
             const jsonResponse = await response.json();
             const output = jsonResponse.data.children.map(post => ({
                 id: post.data.id,
+                subreddit: post.data.subreddit,
                 title: post.data.title,
                 subredditNamePrefixed: post.data.subreddit_name_prefixed,
                 preview: post.data.preview,
                 subredditId: post.data.subreddit_id,
-                url: post.data.url
+                url: post.data.url,
+                permalink: post.data.permalink
             }));
             //console.log(output);
             return output;
@@ -53,3 +55,46 @@ export const getSubredditPosts = createAsyncThunk(
         throw error;
     }
 });
+
+export const getSubredditPostComments = createAsyncThunk(
+    'reddit/getSubredditPostComments',
+    async (subredditCommentLinkString) => {
+    try {
+        const response = await fetch(`${apiBaseURL}${subredditCommentLinkString}.json`);
+        if (response.ok) {
+            const jsonResponse = await response.json();
+            const output = jsonResponse[1].data.children.map(comment => ({
+                subreddit: comment.data.subreddit,
+                subreddit_name_prefixed: comment.data.subreddit_name_prefixed,
+                name: comment.data.name,//t1_ID
+                ups: comment.data.ups,
+                downs: comment.data.downs,
+                score: comment.data.score,
+                subreddit_id: comment.data.subreddit_id,
+                id: comment.data.id,
+                parent_id: comment.data.parent_id, //t3_IDOFPOST
+                permalink: comment.data.permalink, //url of json for post inc.s post id (in the first one it does not)
+                body: comment.data.body,
+                body_html: comment.data.body_html,
+                //replies_children: comment.data.replies.children;
+            }));
+            console.log(output);
+            return output;
+        } else {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        //throw new Error('Request Failed')
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+});
+
+//UPDATE IMPORT/REQUIRE TO BE CONSISTENT - REMOVE REQUIRE
+//LAST SUBREDDIT, UDNEFINED CONTAINS MORE AND NEEDS EXCLUDING
+//getSubredditPostCommments("/r/pics/comments/1lph8ug/trump_brushes_off_past_rivalry_with_desantis_at/");
+
+//From main post info.
+// "preview": {"images": [{"source": {"url": "https://preview.redd.it/c0pxo1e8ocaf1.jpeg?auto=webp&amp;s=afaaa11f99fd189777b4fccfa37f305f2e99b918", "width": 1280, "height": 720}, 
+// "num_comments": 1677,
+// "permalink": "/r/pics/comments/1lph8ug/trump_brushes_off_past_rivalry_with_desantis_at/"

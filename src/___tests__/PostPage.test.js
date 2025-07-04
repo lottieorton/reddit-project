@@ -1,14 +1,16 @@
 import { PostPage } from '../features/post/PostPage';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useParams , useNavigate } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
+import * as redditApi from '../api/reddit.js';
 
 const mockNavigateFunction = jest.fn();
 //Mock useSelector, useParams and useNavigate
 jest.mock('react-redux', () => ({
-    useSelector: jest.fn()
+    useSelector: jest.fn(),
+    useDispatch: jest.fn()
 }));
 jest.mock('react-router-dom', () => ({
     //...jest.requireActual('react-router-dom'),
@@ -16,28 +18,151 @@ jest.mock('react-router-dom', () => ({
     useNavigate: () => mockNavigateFunction
 }));
 
+jest.mock('../api/reddit.js', () => {
+    // Define base mock action types. Redux will use these with /pending, /fulfilled, /rejected suffixes.
+    const mockSubredditPostCommentsType = 'reddit/getSubredditPostComments';
+
+    return {
+        // Mock getSubredditPostComments, when called by component it returns this object
+        getSubredditPostComments: Object.assign(
+            jest.fn((post) => ({
+                type: mockSubredditPostCommentsType, // The base type without suffix
+                payload: post, // The payload for the dispatched action
+                meta: { arg: post } // Mock meta info
+            })),
+            {
+                // Define the .pending, .fulfilled, .rejected properties that `createAsuncThunk` would normally add
+                pending: { type: `${mockSubredditPostCommentsType}/pending` },
+                fulfilled: { type: `${mockSubredditPostCommentsType}/fulfilled` },
+                rejected: { type: `${mockSubredditPostCommentsType}/rejected` }
+            }
+        ),
+    };
+});
+
 describe('PostPage component', () => {
+    let mockDispatch;
+
     beforeEach(() => {
         jest.clearAllMocks(); //clears any previous calls or mock implementations on the action creator mocks
         mockNavigateFunction.mockClear();
-    })
+        mockDispatch = jest.fn(); //creates a new Jest mock function, ensures call count and arguments are reset for each test
+        useDispatch.mockReturnValue(mockDispatch); //configures the mocked useDispatch to return our mockDispatch function
+    });
     
     //Tell the mocked useSelector what to return. selectorFn represents the arg it will receive in this case will be the state: (state) => state.reddit.feed
     //Helper to set up common mock state for useSelector
-    const mockState = (redditFeed = []) => {
+    const mockState = (redditFeed = [], redditComments = []) => {
         useSelector.mockImplementation((selectorFn) => selectorFn({
             filter: '',
             searchTerm: '',
             reddit: {
                 feed: redditFeed,
                 list: [],
+                comments: redditComments,
                 feedIsLoading: false,
                 feedHasError: false,
                 listIsLoading: false,
-                listHasError: false
+                listHasError: false,
+                commentsIsLoading: false,
+                commentsHasError: false
             }
         }))
     };
+
+    it('if selectedPost and its permalink exists, getSubredditPostComments dispatched', async () => {
+        //arrange
+        const testFeed = [
+                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', permalink: '/r/subreddit1/1a/link_info_here'},
+                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', permalink: '/r/subreddit1/1a/link_info_here'},
+                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', permalink: '/r/subreddit1/1a/link_info_here'},
+        ];
+        const expectedPermalink = '/r/subreddit1/1a/link_info_here';
+        mockState(testFeed);
+        useParams.mockReturnValue({id: '1a'});
+        //action
+        render(<PostPage />);
+        //assert
+        await waitFor(() => {expect(mockDispatch).toHaveBeenCalledTimes(1)});
+        expect(mockDispatch).toHaveBeenCalledWith(redditApi.getSubredditPostComments(expectedPermalink));
+        expect(redditApi.getSubredditPostComments).toHaveBeenCalledWith(expectedPermalink);   
+    });
+
+    it('reduces the comments array to max 50 length', async () => {
+        //arrange
+        const testFeed = [
+                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1'},
+                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2'},
+                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3'},
+        ];
+        //Create more than 50 mock comments
+        const testComments = [];
+        for (let i = 0; i < 60; i++) {
+            testComments.push({
+                subreddit: `subreddit${i}`, 
+                subreddit_name_prefixed: `r/subreddit1`, 
+                name: `t1_1a${i}`, 
+                ups: 10 + i, 
+                downs: 5 + i, 
+                score: 5 + i, 
+                subreddit_id: 't5_3c2b', 
+                id: '1a2b3c', 
+                parent_id: "t3_1a", 
+                permalink: '/r/subreddit1/1a/link_info_here', 
+                body: `This is the ${i} comment`, 
+                body_html: `This is the ${i} comment HTML`
+            })
+        }
+
+        mockState(testFeed, testComments);
+        useParams.mockReturnValue({id: '1a'});
+        //action
+        render(<PostPage />);
+        //assert
+        await waitFor(() => {
+            //Check the parent post details are still there
+            expect(screen.getByRole('button', {name: /Back to Home Page/i})).toBeInTheDocument();
+            expect(screen.getByText(/title1/i)).toBeInTheDocument();
+            expect(screen.getByText(/1a/i)).toBeInTheDocument();
+            expect(screen.getByText(/subredditNamePrefixed1/i)).toBeInTheDocument();
+            expect(screen.getByRole('img', {name: /title1/i})).toBeInTheDocument();
+            //Check the first 50 comments are successfully rendered and not the rest
+            for (let i = 0; i < 5; i++) {
+                const expectedBody = `This is the ${i} comment`;
+                const expectedUps = 10 + 1;
+                const expectedDowns = 5 + 1;
+                const expectedScore = 5 + 1;
+                //Check comment body
+                expect(screen.getByText(expectedBody)).toBeInTheDocument();
+                expect(screen.getByText(`Up votes: ${expectedUps} Down votes: ${expectedDowns} Score: ${expectedScore}`)).toBeInTheDocument();
+            }
+            //Check the 51st comment is not rendered
+            const expected51Body = `This is the 50 comment`
+            expect(screen.queryByText(expected51Body)).not.toBeInTheDocument();
+        })
+    });
+
+    it('if there are no comments it gives an empty array', async () => {
+        //arrange
+        const testFeed = [
+                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1'},
+                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2'},
+                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3'},
+        ];
+        mockState(testFeed, null);
+        useParams.mockReturnValue({id: '1a'});
+        //action
+        const { rerender } = render(<PostPage />); // Get rerender to update props without full unmount
+        //assert 
+        await waitFor(() => {
+            //Check the parent post details are still there
+            expect(screen.getByRole('button', {name: /Back to Home Page/i})).toBeInTheDocument();
+            expect(screen.getByText(/title1/i)).toBeInTheDocument();
+            expect(screen.getByText(/1a/i)).toBeInTheDocument();
+            expect(screen.getByText(/subredditNamePrefixed1/i)).toBeInTheDocument();
+            expect(screen.getByRole('img', {name: /title1/i})).toBeInTheDocument();
+        })
+    });
 
     it('renders the component with post properties when feed not empty', () => {
         //arrange
@@ -46,7 +171,12 @@ describe('PostPage component', () => {
                 {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2'},
                 {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3'},
         ];
-        mockState(testFeed);
+        const testComments = [
+            {subreddit: 'subreddit1', subreddit_name_prefixed: 'r/subreddit1', name: 't1_1a2b', ups: 10, downs: 5, score: 5, subreddit_id: 't5_3c2b', id: '1a2b3c', parent_id: "t3_1a", permalink: '/r/subreddit1/1a/link_info_here', body: 'This is the first comment', body_html: 'This is the first comment HTML'},
+            {subreddit: 'subreddit1', subreddit_name_prefixed: 'r/subreddit1', name: 't1_1a3c', ups: 10, downs: 5, score: 5, subreddit_id: 't5_3c2b', id: '1a2b4d', parent_id: "t3_1a", permalink: '/r/subreddit1/1a/link_info_here', body: 'This is the second comment', body_html: 'This is the second comment HTML'},
+            {subreddit: 'subreddit1', subreddit_name_prefixed: 'r/subreddit1', name: 't1_1a4d', ups: 10, downs: 5, score: 5, subreddit_id: 't5_3c2b', id: '1a2be5', parent_id: "t3_1a", permalink: '/r/subreddit1/1a/link_info_here', body: 'This is the third comment', body_html: 'This is the third comment HTML'}
+        ]
+        mockState(testFeed, testComments);
         useParams.mockReturnValue({id: '1a'});
         //action
         render(<PostPage />);
@@ -54,14 +184,20 @@ describe('PostPage component', () => {
         const titleText = screen.getByText(/title1/i);
         const idText = screen.getByText(/1a/i);
         const category = screen.getByText(/subredditNamePrefixed1/i);
-        const img = screen.getByRole('img', {name: /title1/i});        
+        const img = screen.getByRole('img', {name: /title1/i});
+        const comment1 = screen.getByText(/This is the first comment/i);
+        const comment2 = screen.getByText(/This is the second comment/i);
+        const comment3 = screen.getByText(/This is the third comment/i);    
         //assert
         expect(backButton).toBeInTheDocument();
         expect(titleText).toBeInTheDocument();
         expect(idText).toBeInTheDocument();
         expect(category).toBeInTheDocument();
         expect(img).toBeInTheDocument();
-    }) 
+        expect(comment1).toBeInTheDocument();
+        expect(comment2).toBeInTheDocument();
+        expect(comment3).toBeInTheDocument();
+    }); 
 
     it('renders only the button when feed empty', () => {
         //arrange
@@ -77,7 +213,7 @@ describe('PostPage component', () => {
         expect(screen.queryByText('1a')).not.toBeInTheDocument();
         expect(screen.queryByText('subredditNamePrefixed1')).not.toBeInTheDocument();
         expect(screen.queryByAltText(/title1/i)).not.toBeInTheDocument();
-    })
+    });
 
     it('pressing the back button triggers the useNavigate call', async () => {
         //arrange
@@ -94,5 +230,5 @@ describe('PostPage component', () => {
         await userEvent.click(backButton);
         //assert
         expect(mockNavigateFunction).toHaveBeenCalledTimes(1);
-    })
+    });
 });

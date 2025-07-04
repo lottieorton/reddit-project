@@ -5,28 +5,19 @@ import { useDispatch , useSelector } from 'react-redux';
 //import { useEffect } from 'react';
 //import userEvent from '@testing-library/user-event';
 import * as redditApi from '../api/reddit.js';
+import { useParams } from 'react-router-dom';
+import { setFilter } from '../features/filter/filterSlice.js';
 
 //Mock useDispatch and useSelector
 jest.mock('react-redux', () => ({
     useDispatch: jest.fn(),
     useSelector: jest.fn()
 }));
-//Mock the imported components
-//jest.mock('../features/searchTerm/SearchTerm.js', () => ({
-//    SearchTerm: () => <div data-testid="mockSearchTerm">MockSearchTerm</div>
-//}));
-//jest.mock('../features/filter/Filter.js', () => ({
-//    Filter: () => <div data-testid="mockFilter">MockFilter</div>
-//}));
-//jest.mock('../features/post/Post.js', () => ({
-//    Post: ({id, category, title, url}) => (
-//        <div data-testid={`mock-post-${id}`}>
-//            <h3>{title}</h3>
-//            <h4>{category}</h4>
-//            <img src={url} />
-//        </div>
-//    )
-//}));
+
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useParams: jest.fn()
+}))
 
 //Mock getSubredditPosts and getSubredditList functions - more comprehensive due to all of their states
 //Why the normal basic mock doesn't work here - the process that's occuring:
@@ -96,10 +87,11 @@ describe('MainPage component', () => {
         }))
     };
 
-    it('on component render useEffect dispatches getSubredditPosts and subRedditList', async () => {
+    it('on component render, where no subreddit in url, useEffect dispatches getSubredditPosts and subRedditList', async () => {
         //arrange
         const subredditDefault = '/r/pics/';
         mockState();
+        useParams.mockReturnValue({});
         //action
         render(<MainPage />);
         //assert
@@ -110,9 +102,26 @@ describe('MainPage component', () => {
         expect(redditApi.getSubredditList).toHaveBeenCalledWith();
     });
 
+    it('on component render, where subbreddit in url, useEffect dispatches setFilter, getSubredditPosts and subRedditList', async () => {
+        //arrange
+        const subredditValue = '/r/Home/';
+        const subredditFilterValue = 'Home'
+        mockState();
+        useParams.mockReturnValue({subreddit: 'Home'});
+        //action
+        render(<MainPage />);
+        //assert
+        await waitFor(() => {expect(mockDispatch).toHaveBeenCalledTimes(3)});
+        expect(mockDispatch).toHaveBeenCalledWith(setFilter({value: subredditFilterValue}));
+        expect(mockDispatch).toHaveBeenCalledWith(redditApi.getSubredditPosts(subredditValue));
+        expect(mockDispatch).toHaveBeenCalledWith(redditApi.getSubredditList());
+        expect(redditApi.getSubredditPosts).toHaveBeenCalledWith(subredditValue);
+        expect(redditApi.getSubredditList).toHaveBeenCalledWith();
+    });
 
     it('renders a header', async () => {
         //arrange
+        useParams.mockReturnValue({});
         //action
         render(<MainPage />);
         const header = screen.getByText(`Reddit? No? Well you've come to the right place`);
@@ -120,5 +129,5 @@ describe('MainPage component', () => {
         expect(header).toBeInTheDocument;
     })
 
-//NEED CHECK IF RENDERS THE OUTLERT? COVERED IN APP.TEST?
+//NEED CHECK IF RENDERS THE OUTLET? COVERED IN APP.TEST?
 })

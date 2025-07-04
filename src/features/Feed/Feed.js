@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux';
 import { Post } from '../post/Post.js';
 import { SearchTerm } from '../searchTerm/SearchTerm.js';
 import { Filter } from '../filter/Filter.js';
-import { getSubredditPosts, getSubredditList } from '../../api/reddit.js';
-import { store } from '../../app/store.js';
+//import { getSubredditPosts, getSubredditList } from '../../api/reddit.js';
+//import { store } from '../../app/store.js';
 //import styles from './Counter.module.css';
 
 export function Feed() {
@@ -35,8 +35,8 @@ export function Feed() {
             <Filter />
 
             {feed.map((post) => {
-                const {id, subredditNamePrefixed, title, url} = post;
-                return <Post key={id} id={id} category={subredditNamePrefixed} title={title} url={url} /> 
+                const {id, subredditNamePrefixed, title, url, subreddit} = post;
+                return <Post key={id} id={id} category={subredditNamePrefixed} title={title} url={url} subreddit={subreddit} /> 
             })}
 
         </>

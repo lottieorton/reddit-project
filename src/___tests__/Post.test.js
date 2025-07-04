@@ -10,7 +10,7 @@ describe('Post component', () => {
         //action
         render(
             <BrowserRouter>
-                <Post key={'123'} id={'123'} category={'subredditNamePrefixed1'} title={'title1'} url={'http://test.com'} />
+                <Post key={'123'} id={'123'} category={'subredditNamePrefixed1'} title={'title1'} url={'http://test.com'} subreddit={'subreddit'} />
             </BrowserRouter>
         );
         const h3Header = screen.getByText('title1');

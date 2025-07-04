@@ -8,7 +8,7 @@ import { MainPage } from './features/MainPage/MainPage.js';
 const router = createBrowserRouter(createRoutesFromElements([
   <Route path='/' element={<MainPage />}>
     <Route index element={<Feed />} />
-    <Route path='postpage/:id' element={<PostPage />} />
+    <Route path='subreddit/:subreddit/postpage/:id' element={<PostPage />} />
   </Route>
 ]));
 

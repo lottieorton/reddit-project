@@ -1,15 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getSubredditPosts, getSubredditList } from '../api/reddit.js';
+import { getSubredditPosts, getSubredditList, getSubredditPostComments } from '../api/reddit.js';
 
 export const redditSlice = createSlice({
     name: 'reddit',
     initialState: {
         feed: [],
         list: [],
+        comments: [],
         feedIsLoading: false,
         feedHasError: false,
         listIsLoading: false,
-        listHasError: false
+        listHasError: false,
+        commentsIsLoading: false,
+        commentsHasError: false
     },
     reducers: {
     },
@@ -46,6 +49,22 @@ export const redditSlice = createSlice({
             (state, action) => {
                 state.listIsLoading = false;
                 state.listHasError = true;
+        }).addCase(
+            getSubredditPostComments.pending,
+            (state) => {
+                state.commentsIsLoading = true;
+                state.commentsHasError = false;
+        }).addCase(
+            getSubredditPostComments.fulfilled,
+            (state, action) => {
+                state.comments = action.payload;
+                state.commentsIsLoading = false;
+                state.commentsHasError = false;
+        }).addCase(
+            getSubredditPostComments.rejected,
+            (state, action) => {
+                state.commentsIsLoading = false;
+                state.commentsHasError = true;
         })
     }
 })
