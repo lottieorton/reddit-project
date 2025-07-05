@@ -13,6 +13,10 @@ export function PostPage() {
     const feed = useSelector((state) => state.reddit.feed);
     const allComments = useSelector((state) => state.reddit.comments);
     const selectedPost = feed.find(post => post.id === id); //use find for single item
+    const feedIsLoading = useSelector((state) => state.reddit.feedIsLoading);
+    const feedHasError = useSelector((state) => state.reddit.feedHasError);
+    const commentsIsLoading = useSelector((state) => state.reddit.commentsIsLoading);
+    const commentsHasError = useSelector((state) => state.reddit.commentsHasError);
 
     useEffect(() => {
         if(selectedPost && selectedPost.permalink) {//WILL NEED TO ALTER COMMENTS LOGIC AS NEED TO CHECK SAME NOT JUST EXIST 
@@ -38,7 +42,9 @@ export function PostPage() {
                 <h4>{subredditNamePrefixed}</h4>
                 <img src={url} alt={title}/>
 
-                <h4>Comments:</h4>
+                {commentsHasError ? <p>Oops seems to be an issue with your comments loading! Try again later.</p> : 
+                <> 
+                    <h4>Comments: {commentsIsLoading ? <p>Your comments will be ready in just a min</p> : <></>}</h4>
                     <ul>
                         {comments.map(comment => {
                             const {ups, downs, score, body, name} = comment;
@@ -50,11 +56,19 @@ export function PostPage() {
                             )
                         })}
                     </ul>
+                </>}
+            </>
+    )} else if (feedIsLoading) {
+        return  (
+            <>
+                <button onClick={handleBackButton}>Back to Home Page</button>
+                <p>Please wait while this post loads...</p>
             </>
     )} else {
         return  (
             <>
                 <button onClick={handleBackButton}>Back to Home Page</button>
+                <p>Oopsie seems to be a little error causing mischief here. Try again later is you wanna.</p>
             </>
     )}
 }

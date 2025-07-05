@@ -126,7 +126,7 @@ describe('MainPage component', () => {
         render(<MainPage />);
         const header = screen.getByText(`Reddit? No? Well you've come to the right place`);
         //assert
-        expect(header).toBeInTheDocument;
+        expect(header).toBeInTheDocument();
     })
 
 //NEED CHECK IF RENDERS THE OUTLET? COVERED IN APP.TEST?

@@ -21,20 +21,35 @@ jest.mock('react-router-dom', () => ({
 jest.mock('../api/reddit.js', () => {
     // Define base mock action types. Redux will use these with /pending, /fulfilled, /rejected suffixes.
     const mockSubredditPostCommentsType = 'reddit/getSubredditPostComments';
+    const mockSubredditPostsType = 'reddit/getSubredditPosts';
 
     return {
         // Mock getSubredditPostComments, when called by component it returns this object
         getSubredditPostComments: Object.assign(
-            jest.fn((post) => ({
+            jest.fn((permalink) => ({
                 type: mockSubredditPostCommentsType, // The base type without suffix
-                payload: post, // The payload for the dispatched action
-                meta: { arg: post } // Mock meta info
+                payload: permalink, // The payload for the dispatched action
+                meta: { arg: permalink } // Mock meta info
             })),
             {
                 // Define the .pending, .fulfilled, .rejected properties that `createAsuncThunk` would normally add
                 pending: { type: `${mockSubredditPostCommentsType}/pending` },
                 fulfilled: { type: `${mockSubredditPostCommentsType}/fulfilled` },
                 rejected: { type: `${mockSubredditPostCommentsType}/rejected` }
+            }
+        ),
+        // Mock getSubredditPosts, when called by component it returns this object
+        getSubredditPosts: Object.assign(
+            jest.fn((post) => ({
+                type: mockSubredditPostsType, // The base type without suffix
+                payload: post, // The payload for the dispatched action
+                meta: { arg: post } // Mock meta info
+            })),
+            {
+                // Define the .pending, .fulfilled, .rejected properties that `createAsuncThunk` would normally add
+                pending: { type: `${mockSubredditPostsType}/pending` },
+                fulfilled: { type: `${mockSubredditPostsType}/fulfilled` },
+                rejected: { type: `${mockSubredditPostsType}/rejected` }
             }
         ),
     };
@@ -52,7 +67,7 @@ describe('PostPage component', () => {
     
     //Tell the mocked useSelector what to return. selectorFn represents the arg it will receive in this case will be the state: (state) => state.reddit.feed
     //Helper to set up common mock state for useSelector
-    const mockState = (redditFeed = [], redditComments = []) => {
+    const mockState = (redditFeed = [], redditComments = [], commentsIsLoading = false, commentsHasError = false, feedIsLoading = false, feedHasError = false) => {
         useSelector.mockImplementation((selectorFn) => selectorFn({
             filter: '',
             searchTerm: '',
@@ -60,12 +75,12 @@ describe('PostPage component', () => {
                 feed: redditFeed,
                 list: [],
                 comments: redditComments,
-                feedIsLoading: false,
-                feedHasError: false,
+                feedIsLoading: feedIsLoading,
+                feedHasError: feedHasError,
                 listIsLoading: false,
                 listHasError: false,
-                commentsIsLoading: false,
-                commentsHasError: false
+                commentsIsLoading: commentsIsLoading,
+                commentsHasError: commentsHasError
             }
         }))
     };
@@ -197,7 +212,68 @@ describe('PostPage component', () => {
         expect(comment1).toBeInTheDocument();
         expect(comment2).toBeInTheDocument();
         expect(comment3).toBeInTheDocument();
-    }); 
+    });
+
+    it('shows loading message and then error message for comment when comments load and then error', async () => {
+        //arrange
+        const postId = '1a'
+        const expectedPermalink = `/r/subreddit1/${postId}/link_info_here`;
+        const selectedPost = [{id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', permalink: expectedPermalink}];
+        const testFeed = selectedPost;
+        //Mock initial State
+        mockState(testFeed, [], false, false);
+        useParams.mockReturnValue({id: postId});
+        const { rerender } = render(<PostPage />);
+        //assert
+        //Simulate pending state
+        await waitFor(() => {
+            expect(mockDispatch).toHaveBeenCalledWith(redditApi.getSubredditPostComments(expectedPermalink));
+            expect(redditApi.getSubredditPostComments).toHaveBeenCalledWith(expectedPermalink);
+        })
+        mockState(testFeed, [], true, false);
+        rerender(<PostPage />);
+        await waitFor(() => {
+            expect(screen.getByText(/Your comments will be ready in just a min/i)).toBeInTheDocument();
+        })
+        //Simulate rejected state
+        mockState(testFeed, [], false, true);
+        rerender(<PostPage />);
+        await waitFor(() => {
+            expect(screen.getByText(/Oops seems to be an issue with your comments loading! Try again later\./i)).toBeInTheDocument();
+            expect(screen.queryByText(/Your comments will be ready in just a min/i)).not.toBeInTheDocument();
+        })
+        //Check other components loaded correctly
+        const backButton = screen.getByRole('button', {name: /Back to Home Page/i});
+        const titleText = screen.getByText(/title1/i);
+        const idText = screen.getByText(/1a/i);
+        const category = screen.getByText(/subredditNamePrefixed1/i);
+        const img = screen.getByRole('img', {name: /title1/i});
+        expect(backButton).toBeInTheDocument();
+        expect(titleText).toBeInTheDocument();
+        expect(idText).toBeInTheDocument();
+        expect(category).toBeInTheDocument();
+        expect(img).toBeInTheDocument();
+        expect(screen.queryByText(/This is the first comment/i)).not.toBeInTheDocument();
+    });
+
+    it('renders a feed loading message while loading and error message when errors', async () => {
+        //arrange
+        const postId = '1a'
+        mockState([], [], false, false, true, false);
+        useParams.mockReturnValue({id: postId});
+        const { rerender } = render(<PostPage />);
+        const backButton = screen.getByRole('button', {name: /Back to Home Page/i})
+        expect(backButton).toBeInTheDocument();
+        expect(screen.getByText(/Please wait while this post loads\.\.\./i)).toBeInTheDocument();
+        //Simulate rejected state
+        mockState([], [], false, false, false, true);
+        rerender(<PostPage />);
+        await waitFor(() => {
+            expect(screen.getByText(/Oopsie seems to be a little error causing mischief here\. Try again later is you wanna\./i)).toBeInTheDocument();
+            expect(screen.queryByText(/Please wait while this post loads\.\.\./i)).not.toBeInTheDocument();
+            expect(backButton).toBeInTheDocument();
+        })
+    })
 
     it('renders only the button when feed empty', () => {
         //arrange
@@ -209,6 +285,7 @@ describe('PostPage component', () => {
         const backButton = screen.getByRole('button', {name: /Back to Home Page/i});        
         //assert
         expect(backButton).toBeInTheDocument();
+        expect(screen.getByText(/Oopsie seems to be a little error causing mischief here. Try again later is you wanna./i)).toBeInTheDocument();
         expect(screen.queryByText('title1')).not.toBeInTheDocument();
         expect(screen.queryByText('1a')).not.toBeInTheDocument();
         expect(screen.queryByText('subredditNamePrefixed1')).not.toBeInTheDocument();
@@ -216,7 +293,7 @@ describe('PostPage component', () => {
     });
 
     it('pressing the back button triggers the useNavigate call', async () => {
-        //arrange
+                //arrange
         const testFeed = [
                 {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1'},
                 {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2'},

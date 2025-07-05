@@ -64,7 +64,7 @@ describe('Filter component', () => {
         //Expect it to render the filter label and dropdown element
         expect(filterLabel).toBeInTheDocument();
         expect(filterDropdown).toBeInTheDocument();
-        expect(filterBox).toBeInTheDocument;
+        expect(filterBox).toBeInTheDocument();
         //Expect it to render the default text 'Filter...'
         expect(filterDefaultValue).toBeInTheDocument();
         expect(filterBox).toHaveValue('pics');
