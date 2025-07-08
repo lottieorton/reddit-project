@@ -3,7 +3,7 @@ import { useSelector , useDispatch } from 'react-redux';
 import { useParams , useNavigate } from 'react-router-dom';
 import { getSubredditPostComments } from '../../api/reddit.js';
 //import { setFilter } from '../filter/filterSlice.js';
-//import styles from './Counter.module.css';
+import styles from './PostPage.module.css';
 
 export function PostPage() {
     const navigate = useNavigate();
@@ -30,45 +30,56 @@ export function PostPage() {
 
     //UPDATE CRITERIA TO CHECK THAT SUBREDDIT MATCHES VALUE WANT AS WELL
     if(feed.length != 0) {
-        console.log(selectedPost);
-        const {title, subredditNamePrefixed, url, permalink} = selectedPost;
-        const comments = allComments ? allComments.slice(0, 50) : [];
+        //console.log(selectedPost);
+        const {title, subredditNamePrefixed, url, permalink, author, numComments} = selectedPost;
+        const comments = allComments ?
+            allComments.filter(comment => {
+                return comment.body !== undefined && comment.body !== '';
+            }).slice(0, 50) 
+            : [];
 
         return  (
-            <>
-                <button onClick={handleBackButton}>Back to Home Page</button>
-                <h3>{title}</h3>
-                <h3>{id}</h3>
-                <h4>{subredditNamePrefixed}</h4>
-                <img src={url} alt={title}/>
-
-                {commentsHasError ? <p>Oops seems to be an issue with your comments loading! Try again later.</p> : 
-                <> 
-                    <h4>Comments: {commentsIsLoading ? <p>Your comments will be ready in just a min</p> : <></>}</h4>
-                    <ul>
-                        {comments.map(comment => {
-                            const {ups, downs, score, body, name} = comment;
-                            return (
-                                <li key={name} >
-                                    <p>{body}</p>
-                                    <p>Up votes: {ups} Down votes: {downs} Score: {score}</p> 
-                                </li>
-                            )
-                        })}
-                    </ul>
-                </>}
-            </>
+            <div className={styles.postPage}>
+                <button onClick={handleBackButton} className={styles.postPageButton}>Back to Home Page</button>
+                <div className={styles.postPagePost}>
+                    <h3>{title}</h3>
+                    <img src={url} alt={title} className={styles.postPageImage}/>
+                    <div className={styles.postPageInfo}>
+                        <p>Author: {author}</p>
+                        <p>Comments: {numComments}</p>
+                    </div>
+                    {commentsHasError ? <p>Oops seems to be an issue with your comments loading! Try again later.</p> : 
+                    <div className={styles.postPageComments}>
+                        <h4>Comments:</h4>
+                        {commentsIsLoading ? <p className={styles.postPageLoading}>Your comments will be ready in just a min...</p> : <></>}
+                        <ul className={styles.postPageCommentList}>
+                            {comments.map(comment => {
+                                const {ups, downs, score, body, name} = comment;
+                                return (
+                                    <li key={name} className={styles.postPageComment}>
+                                        <p>{body}</p>
+                                        <p className={styles.postPageCommentInfo}>Up votes: {ups} Down votes: {downs} Score: {score}</p> 
+                                    </li>
+                                )
+                            })}
+                        </ul>
+                    </div>}
+                </div>
+            </div>
     )} else if (feedIsLoading) {
         return  (
-            <>
-                <button onClick={handleBackButton}>Back to Home Page</button>
-                <p>Please wait while this post loads...</p>
-            </>
+            <div className={styles.postPage}>
+                <button onClick={handleBackButton} className={styles.postPageButton}>Back to Home Page</button>
+                <p className={styles.postPageLoading}>Please wait while this post loads...</p>
+            </div>
     )} else {
         return  (
-            <>
+            <div className={styles.postPage}>
                 <button onClick={handleBackButton}>Back to Home Page</button>
-                <p>Oopsie seems to be a little error causing mischief here. Try again later is you wanna.</p>
-            </>
+                <p className={styles.postPagePost}>Oopsie seems to be a little error causing mischief here. Try again later is you wanna.</p>
+            </div>
     )}
 }
+
+//<h3>{id}</h3>
+//<h4>{subredditNamePrefixed}</h4>

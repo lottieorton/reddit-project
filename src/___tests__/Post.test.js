@@ -10,16 +10,17 @@ describe('Post component', () => {
         //action
         render(
             <BrowserRouter>
-                <Post key={'123'} id={'123'} category={'subredditNamePrefixed1'} title={'title1'} url={'http://test.com'} subreddit={'subreddit'} />
+                <Post key={'123'} id={'123'} category={'subredditNamePrefixed1'} title={'title1'} url={'http://test.com'} subreddit={'subreddit'} author={'author1'} numComments = {10} />
             </BrowserRouter>
         );
         const h3Header = screen.getByText('title1');
-        const h3Id = screen.getByText('123');
-        const h4Header = screen.getByText('subredditNamePrefixed1');
         const image = screen.getByRole('img', {alt: 'title1'});
+        const authorText = screen.getByText('Author: author1');
+        const numCommentsText = screen.getByText(/Comments: 10/i);
         //assert
         expect(h3Header).toBeInTheDocument();
-        expect(h4Header).toBeInTheDocument();
         expect(image).toBeInTheDocument();
+        expect(authorText).toBeInTheDocument();
+        expect(numCommentsText).toBeInTheDocument();
     })
 });

@@ -1,0 +1,25 @@
+.Feed {
+    /*position: relative;
+    top: 4.5rem;*/
+    width: 100%;
+    
+}
+
+.FeedSelectors {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    padding: 1rem 1rem;
+}
+
+@media only screen and (max-width: 750px) {
+    .FeedSelectors {
+        display: block;
+    }
+}
+
+.FeedLoadingMessage {
+    padding-left: 2rem;
+    color: #ff4400;
+}

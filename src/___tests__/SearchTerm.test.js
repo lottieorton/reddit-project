@@ -56,10 +56,10 @@ describe('SearchTerm Component', () => {
     it('renders the search input and buttons correctly', () => {
         //arrange
         render(<SearchTerm />);
-        const searchText = screen.getByText(/search:/i);
-        const searchInput = screen.getByRole('textbox', { name: /search:/i });
-        const searchButton = screen.getByRole('button', { name: /search/i });
-        const clearButton = screen.getByRole('button', { name: /clear/i });
+        const searchText = screen.getByPlaceholderText(/search/i);
+        const searchInput = screen.getByLabelText('Search posts');
+        const searchButton = screen.getByRole('img', { name: 'Search button' });
+        const clearButton = screen.getByRole('img', {name: 'Clear Search button' });
         //assert
         expect(searchText).toBeInTheDocument();
         //expect(screen.getByLabelText(/search:/i)).toBeInTheDocument();
@@ -71,7 +71,7 @@ describe('SearchTerm Component', () => {
     it('updates input value on change', async () => {
         //arrange
         render(<SearchTerm />);
-        const searchInput = screen.getByRole('textbox', { name: /search:/i });
+        const searchInput = screen.getByLabelText('Search posts');
         const expectedOutputValue = 'hello world'
         //act
         await user.type(searchInput, 'hello world');
@@ -82,8 +82,8 @@ describe('SearchTerm Component', () => {
     it('dispatches setSearchTerm action on "Search" button click with non-empty input', async () => {
         //arrange
         render(<SearchTerm />);
-        const searchInput = screen.getByRole('textbox', { name: /search:/i });
-        const searchButton = screen.getByRole('button', { name: /search/i });
+        const searchInput = screen.getByLabelText('Search posts');
+        const searchButton = screen.getByRole('img', { name: 'Search button' });
         const expectedCalledValue = {value: 'hello'};
         //action
         await user.type(searchInput, 'hello');
@@ -100,8 +100,8 @@ describe('SearchTerm Component', () => {
     it('dispatches clearSearchTerm action on "Search" button click with empty input', async () => {
         //arrange
         render(<SearchTerm />);
-        const searchInput = screen.getByRole('textbox', { name: /search:/i });
-        const searchButton = screen.getByRole('button', { name: /search/i });
+        const searchInput = screen.getByLabelText('Search posts');
+        const searchButton = screen.getByRole('img', { name: 'Search button' });
         //action
         await user.clear(searchInput);
         await user.click(searchButton);
@@ -118,8 +118,8 @@ describe('SearchTerm Component', () => {
     it('clears input and dispatches clearSearchTerm when clear button is clicked', async () => {
         //arrange
         render(<SearchTerm />);
-        const searchInput = screen.getByRole('textbox', { name: /search:/i });
-        const clearButton = screen.getByRole('button', {name: /clear/i});
+        const searchInput = screen.getByLabelText('Search posts');
+        const clearButton = screen.getByRole('img', {name: 'Clear Search button' });
         //action
         await user.type(searchInput, 'heya');
         expect(searchInput).toHaveValue('heya');

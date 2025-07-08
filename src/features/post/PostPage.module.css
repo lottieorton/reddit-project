@@ -1,0 +1,62 @@
+.postPage {
+    padding: 1rem 1rem;
+    width: 100%;
+    /*display: flex;
+    flex-direction: column;*/
+}
+
+.postPageButton {
+    align-items: right;
+    height: 1.5rem;
+    color: #242424;
+    background-color: #f3f3f3ec;
+    border: none;
+    border-radius: 0.2rem;
+    
+}
+
+.postPageButton:hover {
+    cursor: pointer;
+}
+
+.postPagePost  {
+    width: 100%;
+    /*padding: 0rem 1rem;*/
+}
+
+.postPageHeader {
+    font-size: 1rem;
+    color: #242424;
+}
+
+.postPageImage {
+    width: 80%;
+}
+
+.postPageInfo {
+    display: flex;
+    width: 80%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.postPageCommentList {
+    list-style-type: none;
+    list-style-image: url(../../imgs/comment_icon.png);
+
+}
+
+.postPageComment {
+    padding-right: 2rem;
+}
+
+.postPageCommentInfo {
+    color: #ff4400;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding-left: 1rem;
+}
+
+.postPageLoading {
+    color: #ff4400;
+}

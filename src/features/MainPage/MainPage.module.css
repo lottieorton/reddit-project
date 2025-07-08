@@ -1,0 +1,20 @@
+.MainPage-div {
+    /*position: fixed;*/
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    border-bottom: 2px solid grey;
+    width: 100%;
+}
+
+.MainPage-h1 {
+    font-size: 1.5rem;
+    /*display: inline;*/
+}
+
+.MainPage-logo {
+    width: 25px;
+    height: 25px;
+    /*display: inline;*/
+    padding-right: 5px;
+}

@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-//import styles from './Counter.module.css';
+import styles from './Post.module.css';
 
 
-export function Post({id, category, title, url, subreddit}) {
-    
+export function Post({id, category, title, url, subreddit, author, numComments}) {
     return  (
-        <>
-            <Link to={`/subreddit/${subreddit}/postpage/${id}`}><h3>{title}</h3></Link>
-            <h3>{id}</h3>
-            <h4>{category}</h4>
-            <img src={url} alt={title}/>
-        </>
+        <div className={styles.posts}>
+            <Link to={`/subreddit/${subreddit}/postpage/${id}`} className={styles.postTitle}><h3>{title}</h3></Link>
+            <img src={url} alt={title} className={styles.postImages} />
+            <div className={styles.postInfo}>
+                <p>Author: {author}</p>
+                <p>Comments: {numComments}</p>
+            </div>
+        </div>
     )
 }

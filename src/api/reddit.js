@@ -42,7 +42,9 @@ export const getSubredditPosts = createAsyncThunk(
                 preview: post.data.preview,
                 subredditId: post.data.subreddit_id,
                 url: post.data.url,
-                permalink: post.data.permalink
+                permalink: post.data.permalink,
+                author: post.data.author,
+                numComments: post.data.num_comments
             }));
             //console.log(output);
             return output;

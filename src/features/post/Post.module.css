@@ -1,0 +1,33 @@
+.posts {
+    width: 80%;
+    border: 1px solid #666565;
+    border-radius: 1rem;
+    padding: 2rem 3rem;
+    display: inline-flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
+@media only screen and (max-width: 750px) {
+    .posts {
+        width: 80%;
+        border: 1px solid #666565;
+        border-radius: 1rem;
+        padding: 5% 5%;
+        margin: 5%;
+    }
+}
+
+.postTitle {
+    font-size: 1rem;
+}
+
+.postImages {
+    width: 100%;
+}
+
+.postInfo {
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: space-between;
+};

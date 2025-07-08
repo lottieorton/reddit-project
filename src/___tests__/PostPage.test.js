@@ -103,15 +103,18 @@ describe('PostPage component', () => {
         expect(redditApi.getSubredditPostComments).toHaveBeenCalledWith(expectedPermalink);   
     });
 
-    it('reduces the comments array to max 50 length', async () => {
+    it('filters the comments array to exclude entries with no body value and reduces array to max 50 length', async () => {
         //arrange
         const testFeed = [
-                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1'},
-                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2'},
-                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3'},
+                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', author: 'author1', numComments: 10},
+                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', author: 'author2', numComments: 11},
+                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', author: 'author3', numComments: 12},
         ];
         //Create more than 50 mock comments
-        const testComments = [];
+        const testComments = [
+            {subreddit: 'subreddita', subreddit_name_prefixed: 'r/1aa', name: 't1_1aa', ups: 1, downs: 3, score: 3, subreddit_id: 't5_3c2b', id: '1a2b3c', parent_id: "t3_1a", permalink: '/r/subreddit1/1a/link_info_here', body: '', body_html: 'This is the first comment HTML'},
+            {subreddit: 'subredditb', subreddit_name_prefixed: 'r/1ab', name: 't1_1ab', ups: 2, downs: 3, score: 3, subreddit_id: 't5_3c2b', id: '1a2b4d', parent_id: "t3_1a", permalink: '/r/subreddit1/1a/link_info_here', body_html: 'This is the second comment HTML'}
+        ];
         for (let i = 0; i < 60; i++) {
             testComments.push({
                 subreddit: `subreddit${i}`, 
@@ -138,9 +141,9 @@ describe('PostPage component', () => {
             //Check the parent post details are still there
             expect(screen.getByRole('button', {name: /Back to Home Page/i})).toBeInTheDocument();
             expect(screen.getByText(/title1/i)).toBeInTheDocument();
-            expect(screen.getByText(/1a/i)).toBeInTheDocument();
-            expect(screen.getByText(/subredditNamePrefixed1/i)).toBeInTheDocument();
             expect(screen.getByRole('img', {name: /title1/i})).toBeInTheDocument();
+            expect(screen.getByText('Author: author1')).toBeInTheDocument();
+            expect(screen.getByText(/Comments: 10/i)).toBeInTheDocument();
             //Check the first 50 comments are successfully rendered and not the rest
             for (let i = 0; i < 5; i++) {
                 const expectedBody = `This is the ${i} comment`;
@@ -160,9 +163,9 @@ describe('PostPage component', () => {
     it('if there are no comments it gives an empty array', async () => {
         //arrange
         const testFeed = [
-                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1'},
-                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2'},
-                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3'},
+                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', author: 'author1', numComments: 10},
+                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', author: 'author2', numComments: 11},
+                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', author: 'author3', numComments: 12},
         ];
         mockState(testFeed, null);
         useParams.mockReturnValue({id: '1a'});
@@ -173,18 +176,18 @@ describe('PostPage component', () => {
             //Check the parent post details are still there
             expect(screen.getByRole('button', {name: /Back to Home Page/i})).toBeInTheDocument();
             expect(screen.getByText(/title1/i)).toBeInTheDocument();
-            expect(screen.getByText(/1a/i)).toBeInTheDocument();
-            expect(screen.getByText(/subredditNamePrefixed1/i)).toBeInTheDocument();
             expect(screen.getByRole('img', {name: /title1/i})).toBeInTheDocument();
+            expect(screen.getByText('Author: author1')).toBeInTheDocument();
+            expect(screen.getByText(/Comments: 10/i)).toBeInTheDocument();
         })
     });
 
     it('renders the component with post properties when feed not empty', () => {
         //arrange
         const testFeed = [
-                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1'},
-                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2'},
-                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3'},
+                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', author: 'author1', numComments: 10},
+                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', author: 'author2', numComments: 11},
+                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', author: 'author3', numComments: 12},
         ];
         const testComments = [
             {subreddit: 'subreddit1', subreddit_name_prefixed: 'r/subreddit1', name: 't1_1a2b', ups: 10, downs: 5, score: 5, subreddit_id: 't5_3c2b', id: '1a2b3c', parent_id: "t3_1a", permalink: '/r/subreddit1/1a/link_info_here', body: 'This is the first comment', body_html: 'This is the first comment HTML'},
@@ -197,17 +200,17 @@ describe('PostPage component', () => {
         render(<PostPage />);
         const backButton = screen.getByRole('button', {name: /Back to Home Page/i});
         const titleText = screen.getByText(/title1/i);
-        const idText = screen.getByText(/1a/i);
-        const category = screen.getByText(/subredditNamePrefixed1/i);
         const img = screen.getByRole('img', {name: /title1/i});
+        const authorText = screen.getByText('Author: author1');
+        const numberComments = screen.getByText(/Comments: 10/i);
         const comment1 = screen.getByText(/This is the first comment/i);
         const comment2 = screen.getByText(/This is the second comment/i);
         const comment3 = screen.getByText(/This is the third comment/i);    
         //assert
         expect(backButton).toBeInTheDocument();
         expect(titleText).toBeInTheDocument();
-        expect(idText).toBeInTheDocument();
-        expect(category).toBeInTheDocument();
+        expect(authorText).toBeInTheDocument();
+        expect(numberComments).toBeInTheDocument();
         expect(img).toBeInTheDocument();
         expect(comment1).toBeInTheDocument();
         expect(comment2).toBeInTheDocument();
@@ -218,7 +221,7 @@ describe('PostPage component', () => {
         //arrange
         const postId = '1a'
         const expectedPermalink = `/r/subreddit1/${postId}/link_info_here`;
-        const selectedPost = [{id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', permalink: expectedPermalink}];
+        const selectedPost = [{id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', permalink: expectedPermalink, author: 'author1', numComments: 10}];
         const testFeed = selectedPost;
         //Mock initial State
         mockState(testFeed, [], false, false);
@@ -233,25 +236,25 @@ describe('PostPage component', () => {
         mockState(testFeed, [], true, false);
         rerender(<PostPage />);
         await waitFor(() => {
-            expect(screen.getByText(/Your comments will be ready in just a min/i)).toBeInTheDocument();
+            expect(screen.getByText(/Your comments will be ready in just a min\.\.\./i)).toBeInTheDocument();
         })
         //Simulate rejected state
         mockState(testFeed, [], false, true);
         rerender(<PostPage />);
         await waitFor(() => {
             expect(screen.getByText(/Oops seems to be an issue with your comments loading! Try again later\./i)).toBeInTheDocument();
-            expect(screen.queryByText(/Your comments will be ready in just a min/i)).not.toBeInTheDocument();
+            expect(screen.queryByText(/Your comments will be ready in just a min\.\.\./i)).not.toBeInTheDocument();
         })
         //Check other components loaded correctly
         const backButton = screen.getByRole('button', {name: /Back to Home Page/i});
         const titleText = screen.getByText(/title1/i);
-        const idText = screen.getByText(/1a/i);
-        const category = screen.getByText(/subredditNamePrefixed1/i);
+        const authorText = screen.getByText('Author: author1');
+        const numberComments = screen.getByText(/Comments: 10/i);
         const img = screen.getByRole('img', {name: /title1/i});
         expect(backButton).toBeInTheDocument();
         expect(titleText).toBeInTheDocument();
-        expect(idText).toBeInTheDocument();
-        expect(category).toBeInTheDocument();
+        expect(authorText).toBeInTheDocument();
+        expect(numberComments).toBeInTheDocument();
         expect(img).toBeInTheDocument();
         expect(screen.queryByText(/This is the first comment/i)).not.toBeInTheDocument();
     });

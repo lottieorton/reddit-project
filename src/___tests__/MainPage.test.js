@@ -119,15 +119,15 @@ describe('MainPage component', () => {
         expect(redditApi.getSubredditList).toHaveBeenCalledWith();
     });
 
-    it('renders a header', async () => {
+    it('renders a header and logo', async () => {
         //arrange
         useParams.mockReturnValue({});
         //action
         render(<MainPage />);
         const header = screen.getByText(`Reddit? No? Well you've come to the right place`);
+        const logo = screen.getByRole('img', { name: /Reddit Logo in black/i })
         //assert
         expect(header).toBeInTheDocument();
+        expect(logo).toBeInTheDocument();
     })
-
-//NEED CHECK IF RENDERS THE OUTLET? COVERED IN APP.TEST?
 })

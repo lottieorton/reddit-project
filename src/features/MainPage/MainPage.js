@@ -4,7 +4,8 @@ import { useDispatch } from 'react-redux';
 import { getSubredditPosts, getSubredditList } from '../../api/reddit.js';
 import { Outlet , useParams } from 'react-router-dom';
 import { setFilter } from '../filter/filterSlice.js';
-//import styles from './Counter.module.css';
+import RedditLogo from '../../imgs/b_w_reddit_logo.png';
+import styles from './MainPage.module.css';
 
 const subredditDefault = '/r/pics/';
 
@@ -27,7 +28,10 @@ export function MainPage() {
 
     return  (
         <>
-            <h1>Reddit? No? Well you've come to the right place</h1>
+            <div className={styles['MainPage-div']}>
+                <img src={RedditLogo} alt='Reddit Logo in black' className={styles['MainPage-logo']}/>
+                <h1 className={styles['MainPage-h1']}>Reddit? No? Well you've come to the right place</h1>
+            </div>
             <Outlet />
         </>
     )

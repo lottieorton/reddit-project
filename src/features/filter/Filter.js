@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setFilter } from './filterSlice.js';
 import { getSubredditPosts } from '../../api/reddit.js';
-//import styles from './Counter.module.css';
+import styles from './Filter.module.css';
 
 export function Filter() {
     const dispatch = useDispatch();
@@ -16,14 +16,18 @@ export function Filter() {
     }
 
     const filterList = useSelector((state) => state.reddit.list);
+    //Removes the double return of pics as I manually add this in as the default value
+    const filteredList = filterList.filter((item) => {
+        return item.displayName !== 'pics'
+    });
 
     return  (
         <>
-            <form>
-                <label htmlFor="filterSearch" >Filter category: </label>
-                <select id ="filterSearch" onChange={handleChange} value={filterCategory}>
-                    <option key={"a"} value={"pics"}>Filter...</option>
-                    {filterList.map((filterOption, index) => {
+            <form className={styles.FilterForm}>
+                <label htmlFor="filterSearch" className={styles.FilterLabel}>Subreddit: </label>
+                <select id ="filterSearch" onChange={handleChange} value={filterCategory} className={styles.FilterDropdown}>
+                    <option key={"a"} value={"pics"}>pics</option>
+                    {filteredList.map((filterOption, index) => {
                         const {displayName, title} = filterOption;
                         return <option key={index} value={displayName}>{displayName}</option>
                     })}
@@ -32,3 +36,6 @@ export function Filter() {
         </>
     )
 }
+
+//<label htmlFor="filterSearch" >Filter category: </label>
+//<option key={"a"} value={"pics"}>Filter...</option>

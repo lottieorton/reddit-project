@@ -1,0 +1,20 @@
+.SearchBarForm {
+    display: flex;
+    align-items: center;
+}
+
+.SearchBarInput {
+    background-color: #f3f3f3ec;
+    /*border: 1px solid #242424;*/
+    border: none;
+    border-radius: 1rem;
+    font-size: 1rem;
+    height: 2rem;
+    padding-left: 1rem;
+}
+
+.searchIcons {
+    height: 30px;
+    padding-left: 10px;
+    cursor: pointer;
+}

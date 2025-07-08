@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 //import styles from './Counter.module.css';
 import { setSearchTerm, clearSearchTerm } from './searchTermSlice.js';
+import styles from './SearchTerm.module.css';
+import searchIcon from '../../imgs/search_icon.png';
+import clearSearchIcon from '../../imgs/clear_search_icon.png';
 
 
 export function SearchTerm() {
@@ -23,11 +26,10 @@ export function SearchTerm() {
 
     return  (
         <>
-            <form>
-                <label htmlFor="searchBar" >Search: </label>
-                <input id ="searchBar" name="searchBar" type="text" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
-                <button onClick={handleSearchClick}>Search</button>
-                <button onClick={handleClearSearchClick}>Clear</button>
+            <form className={styles.SearchBarForm}>
+                <input id="searchBar" className={styles.SearchBarInput} name="searchBar" type="text" value={searchValue} placeholder="Search" aria-label="Search posts" onChange={(e) => setSearchValue(e.target.value)} />
+                <img src={searchIcon} className={styles.searchIcons} onClick={handleSearchClick} alt='Search button' />
+                <img src={clearSearchIcon} className={styles.searchIcons} onClick={handleClearSearchClick} alt='Clear Search button' />
             </form>
         </>
     )

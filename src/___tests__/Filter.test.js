@@ -53,10 +53,10 @@ describe('Filter component', () => {
         ];
         mockInitialState("pics", mockFilterListData); //Set the initial state for this test
         render(<Filter />);
-        const filterBox = screen.getByRole('combobox', {name: /filter category:/i});
-        const filterLabel = screen.getByText(/filter category:/i);
-        const filterDropdown = screen.getByLabelText(/filter category:/i);
-        const filterDefaultValue = screen.getByRole('option', { name: /filter\.\.\./i });
+        const filterBox = screen.getByRole('combobox', {name: /subreddit:/i});
+        const filterLabel = screen.getByText(/subreddit:/i);
+        const filterDropdown = screen.getByLabelText(/subreddit:/i);
+        const filterDefaultValue = screen.getByRole('option', { name: /pics/i });
         const filterDropdownValue1 = screen.getByRole('option', { name: 'displayName1' });
         const filterDropdownValue2 = screen.getByRole('option', { name: 'displayName2' });
         const filterDropdownValue3 = screen.getByRole('option', { name: 'displayName3' });
@@ -83,7 +83,7 @@ describe('Filter component', () => {
         ];
         mockInitialState("pics", mockFilterListData); //Set the initial state for this test
         render(<Filter />);
-        const filterBox = screen.getByRole('combobox', {name: /filter category:/i});
+        const filterBox = screen.getByRole('combobox', {name: /subreddit:/i});
         const filterValue = {value: 'displayName1'};
         const subredditURLExtension = `/r/displayName1/`;
         expect(filterBox).toHaveValue('pics');
@@ -101,7 +101,7 @@ describe('Filter component', () => {
         expect(mockDispatch).toHaveBeenCalledWith(getSubredditPosts(subredditURLExtension));
     });
 
-    it('resets filterCategory state to default `pics` when `Filter...` selected', async () => {
+    it('resets filterCategory state to default `pics` when reselected', async () => {
         //arrange
         const mockFilterListData = [
             {displayName: 'displayName1', title: 'title1'},
@@ -110,7 +110,7 @@ describe('Filter component', () => {
         ];
         mockInitialState("pics", mockFilterListData); //Set the initial state for this test
         render(<Filter />);
-        const filterBox = screen.getByRole('combobox', {name: /filter category:/i});
+        const filterBox = screen.getByRole('combobox', {name: /subreddit:/i});
         expect(filterBox).toHaveValue('pics');   
         //action
         await user.selectOptions(filterBox, 'displayName1');

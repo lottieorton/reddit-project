@@ -5,7 +5,7 @@ import { SearchTerm } from '../searchTerm/SearchTerm.js';
 import { Filter } from '../filter/Filter.js';
 //import { getSubredditPosts, getSubredditList } from '../../api/reddit.js';
 //import { store } from '../../app/store.js';
-//import styles from './Counter.module.css';
+import styles from './Feed.module.css';
 
 export function Feed() {
 
@@ -41,22 +41,23 @@ export function Feed() {
     }
     
     return  (
-        <>
+        <div className={styles.Feed}>
             
-            <SearchTerm />
-
-            {!listIsLoading ? <Filter /> : <></>}
+            <div className={styles.FeedSelectors}>
+                <SearchTerm />
+                {!listIsLoading ? <Filter /> : <></>}
+            </div>
 
             {!feedIsLoading ? 
                 <>
                     {feed.map((post) => {
-                        const {id, subredditNamePrefixed, title, url, subreddit} = post;
-                        return <Post key={id} id={id} category={subredditNamePrefixed} title={title} url={url} subreddit={subreddit} /> 
+                        const {id, subredditNamePrefixed, title, url, subreddit, author, numComments} = post;
+                        return <Post key={id} id={id} category={subredditNamePrefixed} title={title} url={url} subreddit={subreddit} author={author} numComments={numComments} /> 
                     })}
                 </> 
-            : <p>Please wait while this loads...</p> }
+            : <p className={styles.FeedLoadingMessage}>Please wait while this loads...</p> }
             
 
-        </>
+        </div>
     )
 }
