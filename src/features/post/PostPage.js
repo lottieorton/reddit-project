@@ -8,6 +8,7 @@ export function PostPage() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     let { id } = useParams();
+    console.log(id);
 
     const feed = useSelector((state) => state.reddit.feed);
     const allComments = useSelector((state) => state.reddit.comments);

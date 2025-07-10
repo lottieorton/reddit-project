@@ -10,6 +10,7 @@ const subredditDefault = '/r/pics/';
 
 export function MainPage() {
     let { subreddit } = useParams();
+    console.log(subreddit);
     const dispatch = useDispatch();
 
     useEffect(() => {
