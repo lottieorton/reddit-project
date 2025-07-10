@@ -2,8 +2,6 @@ import { MainPage } from '../features/MainPage/MainPage.js';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { useDispatch , useSelector } from 'react-redux';
-//import { useEffect } from 'react';
-//import userEvent from '@testing-library/user-event';
 import * as redditApi from '../api/reddit.js';
 import { useParams } from 'react-router-dom';
 import { setFilter } from '../features/filter/filterSlice.js';

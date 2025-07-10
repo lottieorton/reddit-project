@@ -70,4 +70,3 @@ export const redditSlice = createSlice({
 })
 
 export default redditSlice.reducer;
-//export const selectFeed = (state) => state.feed.feed;

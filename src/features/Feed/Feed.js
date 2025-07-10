@@ -3,8 +3,6 @@ import { useSelector } from 'react-redux';
 import { Post } from '../post/Post.js';
 import { SearchTerm } from '../searchTerm/SearchTerm.js';
 import { Filter } from '../filter/Filter.js';
-//import { getSubredditPosts, getSubredditList } from '../../api/reddit.js';
-//import { store } from '../../app/store.js';
 import styles from './Feed.module.css';
 
 export function Feed() {
@@ -15,7 +13,6 @@ export function Feed() {
     const feedHasError = useSelector((state) => state.reddit.feedHasError);
     const listIsLoading = useSelector((state) => state.reddit.listIsLoading);
     const listHasError = useSelector((state) => state.reddit.listHasError);
-    //console.log(searchValue);
 
     const searchedFeed = searchValue => {
         const lowercaseSearchValue = searchValue.toLowerCase();

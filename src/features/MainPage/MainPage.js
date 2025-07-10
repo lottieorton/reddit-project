@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-//import { Post } from '../post/Post.js';
 import { getSubredditPosts, getSubredditList } from '../../api/reddit.js';
 import { Outlet , useParams } from 'react-router-dom';
 import { setFilter } from '../filter/filterSlice.js';

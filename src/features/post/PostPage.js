@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useSelector , useDispatch } from 'react-redux';
 import { useParams , useNavigate } from 'react-router-dom';
 import { getSubredditPostComments } from '../../api/reddit.js';
-//import { setFilter } from '../filter/filterSlice.js';
 import styles from './PostPage.module.css';
 
 export function PostPage() {
@@ -19,7 +18,7 @@ export function PostPage() {
     const commentsHasError = useSelector((state) => state.reddit.commentsHasError);
 
     useEffect(() => {
-        if(selectedPost && selectedPost.permalink) {//WILL NEED TO ALTER COMMENTS LOGIC AS NEED TO CHECK SAME NOT JUST EXIST 
+        if(selectedPost && selectedPost.permalink) {
             dispatch(getSubredditPostComments(selectedPost.permalink));
         }
     }, [feed]);
@@ -28,10 +27,8 @@ export function PostPage() {
         navigate(-1);
     }
 
-    //UPDATE CRITERIA TO CHECK THAT SUBREDDIT MATCHES VALUE WANT AS WELL
     if(feed.length != 0) {
-        //console.log(selectedPost);
-        const {title, subredditNamePrefixed, url, permalink, author, numComments} = selectedPost;
+        const {title, url, author, numComments} = selectedPost;
         const comments = allComments ?
             allComments.filter(comment => {
                 return comment.body !== undefined && comment.body !== '';
@@ -80,6 +77,3 @@ export function PostPage() {
             </div>
     )}
 }
-
-//<h3>{id}</h3>
-//<h4>{subredditNamePrefixed}</h4>

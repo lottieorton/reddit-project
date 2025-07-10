@@ -17,13 +17,3 @@ export default function App() {
     <RouterProvider router={router} />
   );
 }
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <Feed />
-//     </div>
-//   );
-// }
-
-// export default App;

@@ -1,4 +1,3 @@
-//import { isAsyncThunkAction } from '@reduxjs/toolkit';
 import { getSubredditList, getSubredditPosts, apiBaseURL, getSubredditPostComments } from '../api/reddit.js';
 import '@testing-library/jest-dom';
 import { configureStore } from '@reduxjs/toolkit';

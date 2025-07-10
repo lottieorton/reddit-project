@@ -1,8 +1,7 @@
 import { Feed } from '../features/Feed/Feed.js';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { useSelector } from 'react-redux';
-import * as redditApi from '../api/reddit.js';
 
 //Mock useSelector
 jest.mock('react-redux', () => ({
@@ -40,6 +39,7 @@ describe('Feed component', () => {
             reddit: {
                 feed: redditFeed,
                 list: redditList,
+                comments: [],
                 feedIsLoading: feedIsLoading,
                 feedHasError: feedHasError,
                 listIsLoading: listIsLoading,
@@ -53,9 +53,9 @@ describe('Feed component', () => {
     it('check searchedFeed, correctly filters the returned feed with the searchTerm', async () => {
         //arrange
         const feedReturned = [
-                {id: '1', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', subreddit: 'subreddit1'},
-                {id: '2', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', subreddit: 'subreddit2'},
-                {id: '3', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', subreddit: 'subreddit3'},
+                {id: '1', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', subreddit: 'subreddit1', permalink: '/r/subreddit1/1a/link_info_here', author: 'author1', numComments: 10},
+                {id: '2', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', subreddit: 'subreddit2', permalink: '/r/subreddit1/1a/link_info_here', author: 'author2', numComments: 11},
+                {id: '3', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', subreddit: 'subreddit3', permalink: '/r/subreddit1/1a/link_info_here', author: 'author3', numComments: 12},
             ];
         mockState(feedReturned, 'Title1');
         //action
@@ -69,9 +69,9 @@ describe('Feed component', () => {
     it('check feed, correctly pulls through if no searchValue', async () => {
         //arrange
         const feedReturned = [
-                {id: '1', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', subreddit: 'subreddit1'},
-                {id: '2', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', subreddit: 'subreddit2'},
-                {id: '3', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', subreddit: 'subreddit3'},
+                {id: '1', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', subreddit: 'subreddit1', permalink: '/r/subreddit1/1a/link_info_here', author: 'author1', numComments: 10},
+                {id: '2', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', subreddit: 'subreddit2', permalink: '/r/subreddit1/1a/link_info_here', author: 'author2', numComments: 11},
+                {id: '3', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', subreddit: 'subreddit3', permalink: '/r/subreddit1/1a/link_info_here', author: 'author3', numComments: 12},
             ];
         mockState(feedReturned);
         //action
@@ -100,11 +100,6 @@ describe('Feed component', () => {
 
     it('renders a loading message for feed call pending', async () => {
         //arrange
-        // const feedReturned = [
-        //         {id: '1', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', subreddit: 'subreddit1'},
-        //         {id: '2', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', subreddit: 'subreddit2'},
-        //         {id: '3', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', subreddit: 'subreddit3'},
-        //     ];
         //Mimic loading state
         mockState([], '', [], true, false, false, false);
         //action

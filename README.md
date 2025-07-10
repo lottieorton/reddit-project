@@ -46,3 +46,6 @@ npm test
 
 ### License
 Add this info later!
+
+### To add
+* Integrated tests

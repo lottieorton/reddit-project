@@ -3,10 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import App from '../App.js';
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, createMemoryRouter } from 'react-router-dom';
-import { MainPage } from '../features/MainPage/MainPage.js';
-import { router as appRouter } from '../App';
 //Mock components rendered by the routes
-// jest.mock('../features/Feed/Feed.js', () => ({
 jest.mock('../features/Feed/Feed.js', () => ({
     Feed: () => <div data-testid="mockFeedComponent">Mock Feed Component</div>
 }));
@@ -35,7 +32,7 @@ describe('App component Routing', () => {
         const testRouter = createBrowserRouter(createRoutesFromElements([
           <Route path='/' element={<MockMainPage />}>
             <Route index element={<MockFeed />} />
-            <Route path='postpage/:id' element={<MockPostPage />} />
+            <Route path='subreddit/:subreddit/postpage/:id' element={<MockPostPage />} />
           </Route>
         ]), { initialEntries: ['/'] }); //Sets the initial URL for this test
         //action

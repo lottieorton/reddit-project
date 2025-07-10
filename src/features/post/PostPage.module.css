@@ -1,8 +1,6 @@
 .postPage {
     padding: 1rem 1rem;
     width: 100%;
-    /*display: flex;
-    flex-direction: column;*/
 }
 
 .postPageButton {
@@ -21,7 +19,6 @@
 
 .postPagePost  {
     width: 100%;
-    /*padding: 0rem 1rem;*/
 }
 
 .postPageHeader {

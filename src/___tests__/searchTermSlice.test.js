@@ -1,7 +1,6 @@
 import searchTermReducer, {
     setSearchTerm, 
-    clearSearchTerm,
-    initialState
+    clearSearchTerm
 } from '../features/searchTerm/searchTermSlice.js';
 
 describe('searchTermSlice', () => {

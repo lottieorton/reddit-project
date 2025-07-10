@@ -13,7 +13,6 @@ jest.mock('react-redux', () => ({
     useDispatch: jest.fn()
 }));
 jest.mock('react-router-dom', () => ({
-    //...jest.requireActual('react-router-dom'),
     useParams: jest.fn(),
     useNavigate: () => mockNavigateFunction
 }));
@@ -88,9 +87,9 @@ describe('PostPage component', () => {
     it('if selectedPost and its permalink exists, getSubredditPostComments dispatched', async () => {
         //arrange
         const testFeed = [
-                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', permalink: '/r/subreddit1/1a/link_info_here'},
-                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', permalink: '/r/subreddit1/1a/link_info_here'},
-                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', permalink: '/r/subreddit1/1a/link_info_here'},
+                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', permalink: '/r/subreddit1/1a/link_info_here', author: 'author1', numComments: 10},
+                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', permalink: '/r/subreddit1/1a/link_info_here', author: 'author2', numComments: 11},
+                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', permalink: '/r/subreddit1/1a/link_info_here', author: 'author3', numComments: 12},
         ];
         const expectedPermalink = '/r/subreddit1/1a/link_info_here';
         mockState(testFeed);
@@ -106,9 +105,9 @@ describe('PostPage component', () => {
     it('filters the comments array to exclude entries with no body value and reduces array to max 50 length', async () => {
         //arrange
         const testFeed = [
-                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', author: 'author1', numComments: 10},
-                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', author: 'author2', numComments: 11},
-                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', author: 'author3', numComments: 12},
+                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', permalink: '/r/subreddit1/1a/link_info_here', author: 'author1', numComments: 10},
+                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', permalink: '/r/subreddit1/1a/link_info_here', author: 'author2', numComments: 11},
+                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', permalink: '/r/subreddit1/1a/link_info_here', author: 'author3', numComments: 12},
         ];
         //Create more than 50 mock comments
         const testComments = [
@@ -163,9 +162,9 @@ describe('PostPage component', () => {
     it('if there are no comments it gives an empty array', async () => {
         //arrange
         const testFeed = [
-                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', author: 'author1', numComments: 10},
-                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', author: 'author2', numComments: 11},
-                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', author: 'author3', numComments: 12},
+                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', permalink: '/r/subreddit1/1a/link_info_here', author: 'author1', numComments: 10},
+                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', permalink: '/r/subreddit1/1a/link_info_here', author: 'author2', numComments: 11},
+                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', permalink: '/r/subreddit1/1a/link_info_here', author: 'author3', numComments: 12},
         ];
         mockState(testFeed, null);
         useParams.mockReturnValue({id: '1a'});
@@ -185,9 +184,9 @@ describe('PostPage component', () => {
     it('renders the component with post properties when feed not empty', () => {
         //arrange
         const testFeed = [
-                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', author: 'author1', numComments: 10},
-                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', author: 'author2', numComments: 11},
-                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', author: 'author3', numComments: 12},
+                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', permalink: '/r/subreddit1/1a/link_info_here', author: 'author1', numComments: 10},
+                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', permalink: '/r/subreddit1/1a/link_info_here', author: 'author2', numComments: 11},
+                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', permalink: '/r/subreddit1/1a/link_info_here', author: 'author3', numComments: 12},
         ];
         const testComments = [
             {subreddit: 'subreddit1', subreddit_name_prefixed: 'r/subreddit1', name: 't1_1a2b', ups: 10, downs: 5, score: 5, subreddit_id: 't5_3c2b', id: '1a2b3c', parent_id: "t3_1a", permalink: '/r/subreddit1/1a/link_info_here', body: 'This is the first comment', body_html: 'This is the first comment HTML'},
@@ -298,9 +297,9 @@ describe('PostPage component', () => {
     it('pressing the back button triggers the useNavigate call', async () => {
                 //arrange
         const testFeed = [
-                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1'},
-                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2'},
-                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3'},
+                {id: '1a', title: 'title1', subredditNamePrefixed: 'subredditNamePrefixed1', preview: 'preview1', subredditId: 'subredditId1', url: 'url1', permalink: '/r/subreddit1/1a/link_info_here', author: 'author1', numComments: 10},
+                {id: '2b', title: 'title2', subredditNamePrefixed: 'subredditNamePrefixed2', preview: 'preview2', subredditId: 'subredditId2', url: 'url2', permalink: '/r/subreddit1/1a/link_info_here', author: 'author2', numComments: 11},
+                {id: '3c', title: 'title3', subredditNamePrefixed: 'subredditNamePrefixed3', preview: 'preview3', subredditId: 'subredditId3', url: 'url3', permalink: '/r/subreddit1/1a/link_info_here', author: 'author3', numComments: 12},
         ];
         mockState(testFeed);
         useParams.mockReturnValue({id: '1a'});

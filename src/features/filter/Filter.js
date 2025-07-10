@@ -36,6 +36,3 @@ export function Filter() {
         </>
     )
 }
-
-//<label htmlFor="filterSearch" >Filter category: </label>
-//<option key={"a"} value={"pics"}>Filter...</option>

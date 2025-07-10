@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-//import styles from './Counter.module.css';
 import { setSearchTerm, clearSearchTerm } from './searchTermSlice.js';
 import styles from './SearchTerm.module.css';
 import searchIcon from '../../imgs/search_icon.png';
