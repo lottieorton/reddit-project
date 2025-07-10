@@ -13,7 +13,6 @@ export function PostPage() {
     const allComments = useSelector((state) => state.reddit.comments);
     const selectedPost = feed.find(post => post.id === id); //use find for single item
     const feedIsLoading = useSelector((state) => state.reddit.feedIsLoading);
-    const feedHasError = useSelector((state) => state.reddit.feedHasError);
     const commentsIsLoading = useSelector((state) => state.reddit.commentsIsLoading);
     const commentsHasError = useSelector((state) => state.reddit.commentsHasError);
 
@@ -21,13 +20,13 @@ export function PostPage() {
         if(selectedPost && selectedPost.permalink) {
             dispatch(getSubredditPostComments(selectedPost.permalink));
         }
-    }, [feed]);
+    }, [feed, dispatch, selectedPost]);
 
     const handleBackButton = e => {
         navigate(-1);
     }
 
-    if(feed.length != 0) {
+    if(feed.length !== 0) {
         const {title, url, author, numComments} = selectedPost;
         const comments = allComments ?
             allComments.filter(comment => {

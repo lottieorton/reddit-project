@@ -10,7 +10,6 @@ const subredditDefault = '/r/pics/';
 
 export function MainPage() {
     let { subreddit } = useParams();
-    console.log(subreddit);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -22,7 +21,7 @@ export function MainPage() {
             dispatch(getSubredditPosts(subredditDefault)); //Default subreddit title used when page first loads
         }
         dispatch(getSubredditList());
-    }, []
+    }, [dispatch, subreddit]
     );
 
     return  (

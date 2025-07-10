@@ -74,7 +74,7 @@ export const getSubredditPostComments = createAsyncThunk(
                 body: comment.data.body,
                 body_html: comment.data.body_html,
             }));
-            console.log(output);
+            //console.log(output);
             return output;
         } else {
             throw new Error(`HTTP error! Status: ${response.status}`);

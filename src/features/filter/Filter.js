@@ -28,7 +28,7 @@ export function Filter() {
                 <select id ="filterSearch" onChange={handleChange} value={filterCategory} className={styles.FilterDropdown}>
                     <option key={"a"} value={"pics"}>pics</option>
                     {filteredList.map((filterOption, index) => {
-                        const {displayName, title} = filterOption;
+                        const {displayName} = filterOption;
                         return <option key={index} value={displayName}>{displayName}</option>
                     })}
                 </select>
